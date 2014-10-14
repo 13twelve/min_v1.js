@@ -2,9 +2,10 @@
 
 A super tiny JavaScript library to execute simple DOM querying and hooking event listeners. Aims to return the raw DOM node for you to manipulate directly, using HTML5 (et al) tech like `element.classList` or `element.innerHTML`, etc.
 
-[![Flattr this](http://api.flattr.com/button/flattr-badge-large.png)](http://flattr.com/thing/1268688/remymin-js-on-GitHub)
+Expanded to include a few of the most frequently used helpers from jQuery. 
 
-[![Build Status](https://travis-ci.org/remy/min.js.png?branch=master)](https://travis-ci.org/remy/min.js)
+WIP
+
 
 ## Query elements
 
@@ -47,7 +48,9 @@ $.on('foo', function () {
 
 ### Turning off events?
 
-Current min.js has no support for turning off events (beyond `.removeEventListener` -- but even then you don't have the reference function to work with). Currently there's no plans to implement this (as I find I don't disable events very often at all) -- but I'm not closed to the idea. There's an [issue open](https://github.com/remy/min.js/pull/8), but it adds quite a bit more logic to a very small file. If there's enough :thumbsup: on the issue, I'll add it in. Equally, if you think min.js should stay simple, please :thumbsdown: -- this is useful too.
+```js
+$('a').off('click');
+```
 
 ## Looping
 
@@ -69,6 +72,20 @@ Also when a single element is matched, you have access to it:
 
 ```js
 $('a').href = '/some-place.html';
+```
+
+## Add, remove, has CSS class
+
+```js
+$('a').addClass("foo");
+$('a').removeClass("bar");
+var is_foo = $('a').hasClass("foo"); // true/false
+```
+
+## Offset Top
+
+```js
+var ot = $('a').getOffsetTop(); // number
 ```
 
 ## Silent failing
