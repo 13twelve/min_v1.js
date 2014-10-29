@@ -7,42 +7,68 @@ $ = (function (document, window, $) {
       trigger = 'trigger',
       each = [][forEach],
       // note: createElement requires a string in Firefox
-      dummy = document.createElement('i');
+      dummy = document.createElement('i'),
+      events_cache = {},
+      event_uuid = 0;
 
   nodeList[forEach] = each;
 
   // we have to explicitly add a window.on as it's not included
   // in the Node object.
-  window.on = node.on = function (event, fn) {
+  window.on = node.on = function (type, fn) {
+    event_uuid++;
     if (!this.handlers) {
-      this.handlers = [];
+      this.handlers = {};
     }
-    this.addEventListener(event, fn, false);
-    this.handlers.push(fn);
+    // check for namespace
+    var type_arr = type.split(".");
+    // store event data
+    this.handlers[event_uuid] = type;
+    events_cache[event_uuid] = { type: type_arr[0], namespace: type_arr[1] || "", fn: fn };
+    // add listener
+    this.addEventListener(type_arr[0], fn, false);
     // allow for chaining
     return this;
   };
-    nodeList.on = function (event, fn) {
+    nodeList.on = function (type, fn) {
       this[forEach](function (el) {
-        el.on(event, fn);
+        el.on(type, fn);
       });
       return this;
     };
-  
-  window.off = node.off = function (event, fn) {
-    if (!fn) {
-      this.handlers[forEach](function(handler) {
-        this.removeEventListener(event, handler, false);
-      }.bind(this));
-    } else {
-      this.removeEventListener(event, fn, false);
+
+  window.off = node.off = function (type) {
+    // this.removeEventListener(event, fn, false);
+    // check for namespace
+    var node = this;
+    var node_handlers = node.handlers;
+    var type_arr = (typeof type === "undefined") ? [] : type.split(".");
+    var event_type, event_namespace;
+    if (type_arr.length > 0) {
+      event_type = type_arr[0] || "";
+      event_namespace = type_arr[1] || "";
     }
+    // loop handlers
+    Object.keys(node_handlers)[forEach](function(key,i){
+      if (
+        (type_arr.length === 0) || // off(); so remove all events from node
+        (event_type === events_cache[key].type && event_namespace === events_cache[key].namespace) || // match type and namespace
+        (event_type === events_cache[key].type && event_namespace === "") || // match type and no namespace
+         (event_namespace === events_cache[key].namespace && event_type === "") // match namespace and no type
+      ){
+        // remove the listener
+        node.removeEventListener(events_cache[key].type, events_cache[key].fn, false);
+        // clean up after yourself
+        delete node.handlers[key];
+        delete events_cache[key];
+      }
+    });
     // allow for chaining
     return this;
   };
-    nodeList.off = function (event, fn) {
+    nodeList.off = function (type, fn) {
       this[forEach](function (el) {
-        el.off(event, fn);
+        el.off(type, fn);
       });
       return this;
     };
@@ -67,7 +93,7 @@ $ = (function (document, window, $) {
       });
       return this;
     };
-  
+
   // add remove classes
   window.addClass = node.addClass = function(className) {
     this.classList.add(className);
@@ -90,7 +116,7 @@ $ = (function (document, window, $) {
   window.hasClass = node.hasClass = function (selector) {
    return this.classList.contains(className);
   }
-  
+
   // offset top
   window.getOffsetTop = node.getOffsetTop = function(){
     return this.getBoundingClientRect().top + document.body.scrollTop;

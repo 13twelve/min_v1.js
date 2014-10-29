@@ -2,9 +2,9 @@
 
 A super tiny JavaScript library to execute simple DOM querying and hooking event listeners. Aims to return the raw DOM node for you to manipulate directly, using HTML5 (et al) tech like `element.classList` or `element.innerHTML`, etc.
 
-Expanded to include a few of the most frequently used helpers from jQuery. 
+Expanded to include a few of the most frequently used helpers from jQuery.
 
-WIP
+**WIP** Tests for updated on(), off(), addClass(), removeClass(), hasClass() and getOffsetTop() have not been written (yet)
 
 
 ## Query elements
@@ -15,9 +15,17 @@ var links = $('p:first-child a');
 
 If there is more than one link, the return value is `NodeList`, if there's only a single match, you have an `Element` object. So you need to have an idea of what to expect if you want to modify the DOM.
 
+Optionally you can supply a context in which to look:
+
+```js
+var links = $('p:first-child a','#content');
+```
+
 ## Events
 
-### Bind events
+### Bind events with on()
+
+Basic:
 
 ```js
 $('p:first-child a').on('click', function (event) {
@@ -25,8 +33,27 @@ $('p:first-child a').on('click', function (event) {
   // do something else
 });
 ```
+Or with a namespace:
+```js
+$('p:first-child a').on('click.foo', function (event) {
+  event.preventDefault();
+  // do something else
+});
+```
 
-Note: the `on` and `trigger` methods are on both `Node` objects and `NodeList` objects, which also means this affects the `document` node, so `document.on(type, callback)` will also work.
+Note:
+* the `on` and `trigger` methods are on both `Node` objects and `NodeList` objects, which also means this affects the `document` node, so `document.on(type, callback)` will also work.
+* only accepts singular events and singular namespaces
+* **must** contain an event type (namespace is optional)
+
+### Unbind events with off()
+
+```js
+$('p:first-child a').off(); // clears all handlers
+$('p:first-child a').off('click'); // clears just the click handlers
+$('p:first-child a').off('click.foo'); // clears just foo namespaced click handlers
+$('p:first-child a').off('.foo'); // clears foo namespaced handlers
+```
 
 ### Custom events
 
@@ -44,12 +71,6 @@ $('a:first-child').trigger('foo');
 $.on('foo', function () {
   // foo was fired, but doesn't require a selector
 });
-```
-
-### Turning off events?
-
-```js
-$('a').off('click');
 ```
 
 ## Looping
@@ -94,6 +115,5 @@ Like jQuery, this tiny library silently fails when it doesn't match any elements
 
 # More info
 
-* Special thanks and inspired by [Andrew Lunny](http://github.com/alunny)'s [slide](http://youtu.be/ssR7SKJfcG4?t=20m14s).
-* I've started using this library in conjunction with some [microlibraries](https://github.com/remy/libraries) that I've written for data binding and XHR.
-* License: MIT / http://rem.mit-license.org
+* Apologies to Remy Sharp for introducing my cludgy JS into his nice min.js code ;-)
+* License: MIT
