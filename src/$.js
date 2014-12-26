@@ -134,6 +134,16 @@ $ = (function (document, window, $) {
     return this.getBoundingClientRect().top + document.body.scrollTop;
   }
 
+  // read/write attribute
+  window.attr = node.attr = function(a,v){
+    if (v === undefined) {
+      return this.getAttribute(a);
+    } else {
+      this.setAttribute(a,v);
+      return this;
+    }
+  }
+
   $ = function (s,c) {
     // querySelectorAll requires a string with a length
     // otherwise it throws an exception
