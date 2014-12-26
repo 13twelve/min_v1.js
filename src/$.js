@@ -1,5 +1,8 @@
-/*globals Node:true, NodeList:true*/
 $ = (function (document, window, $) {
+  // Kill exeuction for bad browsers
+  if(typeof document.querySelectorAll === undefined || 'addEventListener' in window === undefined) {
+    return;
+  }
   // Node covers all elements, but also the document objects
   var node = Node.prototype,
       nodeList = NodeList.prototype,
