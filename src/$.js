@@ -144,6 +144,16 @@ $ = (function (document, window, $) {
     }
   }
 
+  // css
+  window.css = node.css = function(p,v) {
+    if (v === undefined) {
+      return this.style[p];
+    } else {
+      this.style[p] = v;
+      return this;
+    }
+  }
+
   $ = function (s,c) {
     // querySelectorAll requires a string with a length
     // otherwise it throws an exception
