@@ -4,6 +4,8 @@ A super tiny JavaScript library to execute simple DOM querying and hooking event
 
 Expanded to include a few of the most frequently used helpers from jQuery.
 
+Checks for querySelectorAll and addEventListener and returns undefined if not present.
+
 **WIP** Tests for updated on(), off(), addClass(), removeClass(), hasClass() and getOffsetTop() have not been written (yet)
 
 
