@@ -96,7 +96,11 @@ $ = (function (document, window, $) {
 
   // add remove classes
   window.addClass = node.addClass = function(className) {
-    this.classList.add(className);
+    if (this.classList) {
+      this.classList.add(className);
+    } else {
+      this.className += ' ' + className;
+    }
   }
     nodeList.addClass = function (className) {
       this[forEach](function (el) {
@@ -105,7 +109,11 @@ $ = (function (document, window, $) {
       return this;
     };
   window.removeClass = node.removeClass = function(className) {
-    this.classList.remove(className);
+    if (this.classList) {
+      this.classList.remove(className);
+    } else {
+      this.className = this.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+    }
   }
     nodeList.removeClass = function (className) {
       this[forEach](function (el) {
@@ -114,7 +122,11 @@ $ = (function (document, window, $) {
       return this;
     };
   window.hasClass = node.hasClass = function (selector) {
-   return this.classList.contains(className);
+   if (this.classList) {
+     return this.classList.contains(className);
+   } else {
+     return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
+   }
   }
 
   // offset top
