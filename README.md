@@ -107,19 +107,19 @@ var is_foo = $('a').hasClass("foo"); // true/false
 
 ## Read/write attributes
 
-'''js
+```js
 $('div:last-child').attr('data-url');
 $('div:first-child').attr('data-url','http://www.github.com/13twelve');
-'''
+```
 
 Expects a singular item.
 
 ## Read/write CSS styles
 
-'''js
+```js
 $('a:last-child').css('color');
 $('a:first-child').css('color','#000000');
-'''
+```
 
 Expects a singular item.
 
