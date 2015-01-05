@@ -1,6 +1,6 @@
 $ = (function (document, window, $) {
   // Kill exeuction for bad browsers
-  if(typeof document.querySelectorAll === undefined || 'addEventListener' in window === undefined) {
+  if(typeof document.querySelectorAll !== undefined && !('addEventListener' in window)) {
     return;
   }
   // Node covers all elements, but also the document objects
