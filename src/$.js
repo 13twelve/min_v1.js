@@ -44,7 +44,7 @@ $ = (function (document, window, $) {
     // this.removeEventListener(event, fn, false);
     // check for namespace
     var node = this;
-    var node_handlers = node.handlers;
+    var node_handlers = window.handlers || node.handlers || [];
     var type_arr = (typeof type === "undefined") ? [] : type.split(".");
     var event_type, event_namespace;
     if (type_arr.length > 0) {
