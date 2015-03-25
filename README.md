@@ -119,6 +119,10 @@ Expects a singular item.
 ```js
 $('a:last-child').css('color');
 $('a:first-child').css('color','#000000');
+$('a:first-child').css({
+  color: '#000000',
+  text-decoration: 'underline'
+});
 ```
 
 Expects a singular item.

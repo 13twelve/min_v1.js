@@ -149,11 +149,18 @@ $ = (function (document, window, $) {
 
   // css
   window.css = node.css = function(p,v) {
-    if (v === undefined) {
-      return this.style[p];
-    } else {
-      this.style[p] = v;
+    if (typeof p === "object") {
+      for (var n in p) {
+        this.style[n] = p[n];
+      }
       return this;
+    } else {
+      if (v === undefined) {
+        return document.defaultView.getComputedStyle(this,null).getPropertyValue(p);
+      } else {
+        this.style[p] = v;
+        return this;
+      }
     }
   }
 
