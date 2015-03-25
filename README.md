@@ -121,7 +121,7 @@ $('a:last-child').css('color');
 $('a:first-child').css('color','#000000');
 $('a:first-child').css({
   color: '#000000',
-  text-decoration: 'underline'
+  paddingRight: '10px'
 });
 ```
 
