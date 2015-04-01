@@ -106,6 +106,7 @@ $ = (function () {
         if (el.classList) {
           el.classList.add(className);
         } else {
+          // TODO: check if has class first
           el.className += ' ' + className;
         }
       });
@@ -162,7 +163,12 @@ $ = (function () {
   }
 
   function $(selector,context){
-    var nodes = (selector === document || selector === window) ? [selector] : (context || document).querySelectorAll(selector || '☺');
+    var nodes = [];
+    if (selector && typeof selector !== "string") {
+      nodes = (selector.addClass) ? selector : [selector];
+    } else if (selector) {
+      nodes = (context || document).querySelectorAll(selector || '☺');
+    }
     return new minjs(nodes);
   }
 
