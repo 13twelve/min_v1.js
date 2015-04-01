@@ -7,8 +7,8 @@ $ = (function (document, window, $) {
 
   function _$(elements) {
     if (elements) {
-      this.length = elements.length
-      for (var i = 0; i < elements.length; i++) {
+      this.length = elements.length;
+      for (var i = 0; i < this.length; i++) {
         this[i] = elements[i];
       }
     }
@@ -154,7 +154,7 @@ $ = (function (document, window, $) {
   }
 
   function $(s,c){
-    var nodes = (c || document).querySelectorAll(s || '☺');
+    var nodes = (s === document || s === window) ? [s] : (c || document).querySelectorAll(s || '☺');
     return new _$(nodes);
   }
 
