@@ -4,7 +4,7 @@ $ = (function () {
     return;
   }
 
-  function _$(elements) {
+  function minjs(elements) {
     if (elements) {
       this.length = elements.length;
       for (var i = 0; i < this.length; i++) {
@@ -13,15 +13,24 @@ $ = (function () {
     }
   }
 
+  // a counter for unique event ids - used for namespacing event handlers
   var event_uuid = 0;
+  // a store for events - used for namespacing event handlers
   var events_cache = {};
 
   function each(arr,func) {
-    Array.prototype.forEach.call(arr, func);
+    //Array.prototype.forEach.call(arr, func);
+    var arr_length = arr.length;
+    for (var i = 0; i < arr_length; i++) {
+      var value = func.call(arr[i],arr[i],i);
+      if (value === false) {
+        break;
+      }
+    }
     return arr;
   }
 
-  _$.prototype = {
+  minjs.prototype = {
     each:function(func){
       return each(this,func);
     },
@@ -152,9 +161,9 @@ $ = (function () {
     }
   }
 
-  function $(s,c){
-    var nodes = (s === document || s === window) ? [s] : (c || document).querySelectorAll(s || '☺');
-    return new _$(nodes);
+  function $(selector,context){
+    var nodes = (selector === document || selector === window) ? [selector] : (context || document).querySelectorAll(selector || '☺');
+    return new minjs(nodes);
   }
 
   return $;
