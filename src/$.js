@@ -1,77 +1,162 @@
-(function() {
+$ = (function (document, window, $) {
 
   // Kill exeuction for bad browsers
   if(typeof document.querySelectorAll !== undefined && !('addEventListener' in window)) {
     return;
   }
 
-  $ = function (s,c) {
-    return (c || document).querySelectorAll(s || '☺');
-  };
-
-  $.VERSION = '2.0.0';
-
-  $.events_cache = {};
-  $.event_uuid = 0;
-
-  // $.forEach(nodelist,function(el,i) { ... });
-  $.forEach = function(elements,func){
-    Array.prototype.forEach.call(elements, func);
-  };
-
-  $.on = function(nodelist,type,fn) {
-    $.forEach(nodelist,function(el,i) {
-      $.event_uuid++;
-      if (!this.handlers) {
-        this.handlers = {};
+  function _$(elements) {
+    if (elements) {
+      this.length = elements.length
+      for (var i = 0; i < elements.length; i++) {
+        this[i] = elements[i];
       }
-      // check for namespace
-      var type_arr = type.split(".");
-      // store event data
-      this.handlers[$.event_uuid] = type;
-      $.events_cache[$.event_uuid] = {
-        type: type_arr[0],
-        namespace: type_arr[1] || "",
-        fn: fn
-      };
-      // add listener
-      this.addEventListener(type_arr[0], fn, false);
-    });
-    // allow for chaining
-    return nodelist;
-  };
+    }
+  }
 
-  $.off = function(nodelist,type) {
-    $.forEach(nodelist,function(el,i) {
-      // check for namespace
-      var node = this;
-      var node_handlers = node.handlers || [];
-      var type_arr = (typeof type === "undefined") ? [] : type.split(".");
-      var event_type, event_namespace;
+  var event_uuid = 0;
+  var events_cache = {};
+
+  function each(arr,func) {
+    Array.prototype.forEach.call(arr, func);
+    return arr;
+  }
+
+  _$.prototype = {
+    each:function(func){
+      return each(this,func);
+    },
+    on:function(type,fn) {
+      each(this,function(el,i){
+        event_uuid++;
+        if (!el.handlers) {
+          el.handlers = {};
+        }
+        // check for namespace
+        var type_arr = type.split(".");
+        // store event data
+        el.handlers[event_uuid] = type;
+        events_cache[event_uuid] = {
+          type: type_arr[0],
+          namespace: type_arr[1] || "",
+          fn: fn
+        };
+        // add listener
+        el.addEventListener(type_arr[0], fn, false);
+      });
+      // allow for chaining
+      return this;
+    },
+    off:function(nodelist,type) {
+      each(this,function(el,i){
+        // check for namespace
+        var node = el;
+        var node_handlers = node.handlers || [];
+        var type_arr = (typeof type === "undefined") ? [] : type.split(".");
+        var event_type, event_namespace;
+        //
+        if (type_arr.length > 0) {
+          event_type = type_arr[0] || "";
+          event_namespace = type_arr[1] || "";
+        }
+        // loop handlers
+        Object.keys(node_handlers).forEach(function(key,i){
+          if (
+            (type_arr.length === 0) || // off(); so remove all events from node
+            (event_type === events_cache[key].type && event_namespace === events_cache[key].namespace) || // match type and namespace
+            (event_type === events_cache[key].type && event_namespace === "") || // match type and no namespace
+             (event_namespace === events_cache[key].namespace && event_type === "") // match namespace and no type
+          ){
+            // remove the listener
+            node.removeEventListener(events_cache[key].type, events_cache[key].fn, false);
+            // clean up after yourself
+            delete node.handlers[key];
+            delete events_cache[key];
+          }
+        });
+      });
+      // allow for chaining
+      return this;
+    },
+    trigger:function(type, data) {
+      // construct an HTML event. This could have
+      // been a real custom event
+      var event = document.createEvent('HTMLEvents');
+      event.initEvent(type, true, true);
+      event.data = data || {};
+      event.eventName = type;
       //
-      if (type_arr.length > 0) {
-        event_type = type_arr[0] || "";
-        event_namespace = type_arr[1] || "";
-      }
-      // loop handlers
-      Object.keys(node_handlers).forEach(function(key,i){
-        if (
-          (type_arr.length === 0) || // off(); so remove all events from node
-          (event_type === $.events_cache[key].type && event_namespace === $.events_cache[key].namespace) || // match type and namespace
-          (event_type === $.events_cache[key].type && event_namespace === "") || // match type and no namespace
-           (event_namespace === $.events_cache[key].namespace && event_type === "") // match namespace and no type
-        ){
-          // remove the listener
-          node.removeEventListener($.events_cache[key].type, $.events_cache[key].fn, false);
-          // clean up after yourself
-          delete node.handlers[key];
-          delete $.events_cache[key];
+      each(this,function(el,i){
+        event.target = el;
+        el.dispatchEvent(event);
+      });
+      // allow for chaining
+      return this;
+    },
+    addClass:function(className){
+      each(this,function(el,i){
+        if (el.classList) {
+          el.classList.add(className);
+        } else {
+          el.className += ' ' + className;
         }
       });
-    });
-    // allow for chaining
-    return nodelist;
-  };
+      return this;
+    },
+    removeClass:function(className){
+      each(this,function(el,i){
+        if (el.classList) {
+          el.classList.remove(className);
+        } else {
+          el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+        }
+      });
+      return this;
+    },
+    hasClass:function(className){
+      var el = (this.length > 0) ? this[0] : this;
+      if (el.classList) {
+        return el.classList.contains(className);
+      } else {
+        return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+      }
+      return el;
+    },
+    getOffsetTop:function(){
+      var el = (this.length > 0) ? this[0] : this;
+      return el.getBoundingClientRect().top + document.body.scrollTop;
+    },
+    attr:function(){
+      var el = (this.length > 0) ? this[0] : this;
+      if (v === undefined) {
+        return el.getAttribute(a);
+      } else {
+        el.setAttribute(a,v);
+        return el;
+      }
+    },
+    css:function(p,v) {
+      var el = (this.length > 0) ? this[0] : this;
+      if (typeof p === "object") {
+        for (var n in p) {
+          el.style[n] = p[n];
+        }
+        return el;
+      } else {
+        if (v === undefined) {
+          return document.defaultView.getComputedStyle(el,null).getPropertyValue(p);
+        } else {
+          el.style[p] = v;
+          return el;
+        }
+      }
+    }
+  }
 
+  function $(s,c){
+    var nodes = (c || document).querySelectorAll(s || '☺');
+    return new _$(nodes);
+  }
 
-}.call(this));
+  return $;
+})(document, this);
