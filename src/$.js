@@ -1,5 +1,4 @@
-$ = (function (document, window, $) {
-
+$ = (function () {
   // Kill exeuction for bad browsers
   if(typeof document.querySelectorAll !== undefined && !('addEventListener' in window)) {
     return;
@@ -159,4 +158,4 @@ $ = (function (document, window, $) {
   }
 
   return $;
-})(document, this);
+})();
