@@ -1,4 +1,5 @@
 $ = (function () {
+  console.warn("minjs v2.0.0 - untested alpha - methods may not work as expected");
   // Kill exeuction for bad browsers
   if(typeof document.querySelectorAll !== undefined && !('addEventListener' in window)) {
     return;
