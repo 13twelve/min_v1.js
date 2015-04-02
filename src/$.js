@@ -131,10 +131,6 @@ $ = (function () {
       }
       return el;
     },
-    getOffsetTop:function(){
-      var el = (this.length > 0) ? this[0] : this;
-      return el.getBoundingClientRect().top + document.body.scrollTop;
-    },
     attr:function(){
       var el = (this.length > 0) ? this[0] : this;
       if (v === undefined) {
