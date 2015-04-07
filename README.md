@@ -1,5 +1,12 @@
 # min.js
 
+## Development stopped, rewrote into a new version
+
+A slightly smaller rewrite that doesn't add methods to the global prototype of the node/nodelist has begun here: [min.js](https://github.com/13twelve/min.js)
+
+## Intro
+
+
 A super tiny JavaScript library to execute simple DOM querying and hooking event listeners. Aims to return the raw DOM node for you to manipulate directly, using HTML5 (et al) tech like `element.classList` or `element.innerHTML`, etc.
 
 Expanded to include a few of the most frequently used helpers from jQuery.
